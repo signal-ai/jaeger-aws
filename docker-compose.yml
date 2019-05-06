@@ -1,0 +1,59 @@
+version: '2'
+
+services:
+    jaeger-collector:
+      image: jaegertracing/jaeger-collector
+      environment:
+        - SPAN_STORAGE_TYPE=elasticsearch
+        - ES_SERVER_URLS=http://elastic:9200
+      ports:
+        - "14269"
+        - "14268:14268"
+        - "14267"
+        - "14250"
+        - "9411:9411"
+      restart: on-failure
+      depends_on:
+        - elastic
+
+    jaeger-query:
+      image: jaegertracing/jaeger-query
+      environment:
+        - SPAN_STORAGE_TYPE=elasticsearch
+        - ES_SERVER_URLS=http://elastic:9200
+      ports:
+        - "16686:16686"
+        - "16687"
+      restart: always
+      depends_on:
+        - elastic
+
+    jaeger-agent:
+      image: jaegertracing/jaeger-agent
+      environment:
+        - LOG_LEVEL=debug
+        - REPORTER_TCHANNEL_HOST_PORT=jaeger-collector:14267
+      ports:
+        - "5775:5775/udp"
+        - "6831:6831/udp"
+        - "6832:6832/udp"
+        - "5778:5778"
+      restart: on-failure
+      depends_on:
+        - jaeger-collector
+
+    elastic:
+      image: docker.elastic.co/elasticsearch/elasticsearch:6.0.0
+      ports:
+      - "9200:9200"
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      mem_limit: 1g
+      container_name: elastic
+      hostname: elastic
+      environment:
+        - bootstrap.memory_lock=true
+        - ES_JAVA_OPTS=-Xms512m -Xmx512m
+        - discovery.type=single-node

@@ -1,0 +1,33 @@
+[
+  {
+    "mountPoints": [],
+    "environment": [{ "name": "REPORTER_TCHANNEL_HOST_PORT", "value": "jaeger-collector.{prive_domain_name}:14267" }],
+
+    "image": "jaegertracing/jaeger-agent",
+    "portMappings": [
+      { "containerPort": 5778 },
+      {
+        "protocol": "udp",
+        "hostPort": 6832,
+        "containerPort": 6832
+      },
+      {
+        "protocol": "udp",
+        "hostPort": 6831,
+        "containerPort": 6831
+      }
+    ],
+    "essential": true,
+    "cpu": 100,
+    "volumesFrom": [],
+    "memory": 64,
+    "logConfiguration": {
+      "options": {
+        "awslogs-group": "jaeger-agent",
+        "awslogs-region": "eu-west-1"
+      },
+      "logDriver": "awslogs"
+    },
+    "name": "application"
+  }
+]

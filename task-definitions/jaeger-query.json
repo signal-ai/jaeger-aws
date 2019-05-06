@@ -1,0 +1,26 @@
+[
+  {
+    "mountPoints": [],
+    "environment": [
+      { "name": "SPAN_STORAGE_TYPE", "value": "elasticsearch" },
+      { "name": "ES_SERVER_URLS", "value": "http://jaeger-elasticsearch.{prive_domain_name}" }
+    ],
+    "image": "jaegertracing/jaeger-query",
+    "portMappings": [
+      {"containerPort": 16686},
+      {"containerPort": 16687}
+    ],
+    "essential": true,
+    "cpu": 512,
+    "volumesFrom": [],
+    "memory": 256,
+    "logConfiguration": {
+      "options": {
+        "awslogs-group": "jaeger-query",
+        "awslogs-region": "eu-west-1"
+      },
+      "logDriver": "awslogs"
+    },
+    "name": "application"
+  }
+]
